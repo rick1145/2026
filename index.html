@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>星宿罗盘 · 二十八宿</title>
+<style>
+:root,[data-theme="dark"]{
+  --bg:#030a16;--surface:#071221;--ring:rgba(56,189,248,.14);
+  --tick:rgba(148,163,184,.20);--text:#e4eaf2;--muted:#7e8ea8;
+  --gold:#5eead4;--accent:#2dd4bf;--ptr:#ef4444;--ptr2:rgba(56,189,248,.30);
+  --card:rgba(7,18,33,.72);--cardb:rgba(56,189,248,.08);
+  --c-east:#2dd4bf;--c-north:#38bdf8;--c-west:#cbd5e1;--c-south:#fbbf24;
+  --face:#071221;--face2:rgba(4,12,26,.92);
+  --ring1:rgba(255,255,255,.04);--ring2:rgba(255,255,255,.10);
+  --ring3:rgba(255,255,255,.16);
+  --btn-g:linear-gradient(135deg,#0d9488,#0f766e);
+  --srch-g:linear-gradient(135deg,#14b8a6,#0d9488);
+  --cal-g:linear-gradient(90deg,#2dd4bf,#38bdf8);
+  --tag-bg:rgba(45,212,191,.10);--so:0.40;--ss:rgba(255,255,255,.05);
+  --ds:drop-shadow(0 4px 36px rgba(0,0,0,.8));
+  --cs:0 2px 20px rgba(0,0,0,.35);
+  --body-g:radial-gradient(ellipse at 50% 25%,rgba(45,212,191,.04) 0%,transparent 70%);
+  --glare1:rgba(255,255,255,.045);--glare3:rgba(255,255,255,.025);
+  --timeline-bg:rgba(255,255,255,.04);
+}
+[data-theme="light"]{
+  --bg:#f3ede0;--surface:#fffdf7;--ring:rgba(139,105,20,.16);
+  --tick:rgba(120,100,70,.20);--text:#3b2a10;--muted:#8b7752;
+  --gold:#8b6914;--accent:#a67c1e;--ptr:#dc2626;--ptr2:rgba(139,105,20,.25);
+  --card:rgba(255,252,242,.80);--cardb:rgba(180,150,100,.12);
+  --c-east:#0d9488;--c-north:#2563eb;--c-west:#78716c;--c-south:#d97706;
+  --face:#fdfaf2;--face2:rgba(255,250,235,.92);
+  --ring1:rgba(139,105,20,.06);--ring2:rgba(139,105,20,.12);
+  --ring3:rgba(139,105,20,.20);
+  --btn-g:linear-gradient(135deg,#a67c1e,#8b6914);
+  --srch-g:linear-gradient(135deg,#b8860b,#8b6914);
+  --cal-g:linear-gradient(90deg,#a67c1e,#d97706);
+  --tag-bg:rgba(139,105,20,.08);--so:0.50;--ss:rgba(139,105,20,.10);
+  --ds:drop-shadow(0 4px 20px rgba(0,0,0,.10));
+  --cs:0 2px 14px rgba(0,0,0,.06);
+  --body-g:radial-gradient(ellipse at 50% 25%,rgba(139,105,20,.025) 0%,transparent 70%);
+  --glare1:rgba(255,255,255,.35);--glare3:rgba(255,255,255,.20);
+  --timeline-bg:rgba(0,0,0,.04);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Noto Serif SC','Microsoft YaHei',serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:12px;user-select:none;-webkit-tap-highlight-color:transparent;background-image:var(--body-g);transition:background .4s,color .4s}
+.app{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.tbar{width:100%;display:flex;justify-content:flex-end;gap:6px}
+.tbtn{background:var(--card);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--cardb);color:var(--muted);padding:5px 14px;border-radius:20px;cursor:pointer;font-size:.7rem;font-family:inherit;font-weight:500;transition:all .25s;letter-spacing:.03em}
+.tbtn.on{color:var(--accent);border-color:var(--accent);font-weight:600}
+.sbar{width:100%;display:flex;gap:8px;background:var(--card);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--cardb);border-radius:34px;padding:7px 8px 7px 18px;transition:box-shadow .3s;box-shadow:inset 0 1px 0 var(--glare1),var(--cs)}
+.sbar:focus-within{box-shadow:inset 0 1px 0 var(--glare1),0 0 0 2px rgba(45,212,191,.10)}
+.sin{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.9rem;font-family:inherit;letter-spacing:.02em}
+.sin::placeholder{color:var(--muted);opacity:.55}
+.sbtn{background:var(--srch-g);border:none;color:#fff;border-radius:28px;padding:9px 20px;font-weight:600;font-size:.85rem;font-family:inherit;cursor:pointer;transition:transform .15s;box-shadow:0 2px 12px rgba(14,165,233,.22);white-space:nowrap}
+.sbtn:active{transform:scale(.95)}
+.aBox{background:var(--card);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--cardb);border-radius:36px;padding:6px 22px;display:flex;align-items:baseline;gap:4px;box-shadow:inset 0 1px 0 var(--glare1),var(--cs)}
+.aNum{font-size:2.2rem;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.03em}
+.aDeg{color:var(--muted);font-size:1rem}
+.cW{position:relative;width:100%;aspect-ratio:1/1;max-width:400px}
+.cW::before{content:'';position:absolute;inset:3% 6% 45% 8%;background:linear-gradient(175deg,var(--glare1) 0%,transparent 65%);border-radius:40%;pointer-events:none;z-index:2;filter:blur(8px)}
+.cW::after{content:'';position:absolute;inset:48% 8% 8% 40%;background:linear-gradient(345deg,var(--glare3) 0%,transparent 60%);border-radius:35%;pointer-events:none;z-index:2;filter:blur(10px)}
+.cS{width:100%;height:100%;display:block;filter:var(--ds)}
+.badge{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--card);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--cardb);border-radius:18px;padding:4px 16px;font-size:.95rem;font-weight:600;color:var(--gold);white-space:nowrap;z-index:10;pointer-events:none;letter-spacing:.04em;box-shadow:inset 0 1px 0 var(--glare1)}
+.bRow{display:flex;gap:8px;width:100%}
+.btn{flex:1;background:var(--card);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--cardb);color:var(--text);padding:11px 0;border-radius:30px;cursor:pointer;font-size:.85rem;font-family:inherit;font-weight:500;transition:all .2s;text-align:center;letter-spacing:.03em;box-shadow:inset 0 1px 0 var(--glare1)}
+.btn:active{transform:scale(.96)}
+.btn.a{background:var(--btn-g);border-color:transparent;color:#fff;font-weight:600;box-shadow:0 2px 14px rgba(14,165,233,.18)}
+.card{width:100%;background:var(--card);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--cardb);border-radius:18px;padding:16px;box-shadow:inset 0 1px 0 var(--glare1),var(--cs)}
+.sr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sn{font-size:1.55rem;font-weight:700;color:var(--gold)}
+.lic{cursor:pointer;font-size:1rem;opacity:.4;transition:opacity .2s}.lic:hover{opacity:.8}
+.tgs{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.tag{font-size:.7rem;padding:3px 10px;border-radius:14px;font-weight:500;letter-spacing:.02em}
+.te{background:var(--tag-bg);color:var(--gold);border:1px solid rgba(45,212,191,.08)}
+.tq{background:rgba(128,128,128,.05);color:var(--muted);border:1px solid rgba(128,128,128,.06)}
+.pBar{font-size:.72rem;color:var(--muted);margin-bottom:8px;letter-spacing:.02em}
+.pBar span{color:var(--gold);font-weight:500}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:.7rem}
+.ii{background:rgba(128,128,128,.025);border:1px solid rgba(128,128,128,.04);border-radius:8px;padding:7px 9px;display:flex;flex-direction:column;gap:2px}
+.il{color:var(--muted);font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.iv{color:var(--text);font-weight:500;line-height:1.35}
+
+/* 日历卡片 */
+.calCard .calHead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.calCard .calDate{font-size:1.3rem;font-weight:700;color:var(--gold)}
+.calCard .calLunar{font-size:.78rem;color:var(--muted)}
+.calCard .calGanzhi{font-size:.85rem;color:var(--text);font-weight:500;background:rgba(128,128,128,.06);padding:2px 10px;border-radius:12px}
+.calTimeWrap{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px}
+.calSeg{padding:5px 10px;border-radius:10px;font-size:.7rem;font-weight:500;background:rgba(128,128,128,.04);color:var(--muted);transition:all .25s}
+.calSeg.now{background:var(--tag-bg);color:var(--gold);font-weight:600;border:1px solid rgba(45,212,191,.15)}
+.calSeg .t{display:block;font-size:.62rem;opacity:.6;margin-top:1px}
+.calNav{display:flex;gap:4px;align-items:center;justify-content:center}
+.calNavBtn{background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:2px 8px;font-family:inherit}
+.calNavBtn:hover{color:var(--gold)}
+.calNavDate{font-size:.72rem;color:var(--muted);min-width:70px;text-align:center}
+.calMore{margin-top:8px;font-size:.65rem;color:var(--muted);text-align:center;cursor:pointer;opacity:.6;letter-spacing:.04em}.calMore:hover{opacity:1}
+
+.cal{position:fixed;inset:0;background:rgba(3,8,16,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;transition:opacity .3s}
+.cal.hid{display:none}
+.calT{font-size:1.15rem;color:#5eead4;font-weight:600;margin-bottom:28px}
+.calR{width:140px;height:140px;border:3px dashed #5eead4;border-radius:50%;margin-bottom:28px;display:flex;align-items:center;justify-content:center;animation:calSp 2.5s linear infinite}
+.calRi{width:100px;height:100px;border:2px dashed rgba(94,234,212,.3);border-radius:50%;animation:calSp 4s linear infinite reverse}
+@keyframes calSp{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.calP{width:200px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.calPb{height:100%;width:0%;background:var(--cal-g);border-radius:2px;transition:width .25s}
+.calSt{color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:28px}
+.calX{padding:13px 44px;background:linear-gradient(135deg,#14b8a6,#0d9488);border:none;border-radius:30px;color:#fff;font-weight:600;font-size:.95rem;font-family:inherit;cursor:pointer;box-shadow:0 4px 18px rgba(20,184,166,.25)}
+@keyframes fl{0%,100%{fill:inherit}50%{fill:#fbbf24}}
+.sf{animation:fl .28s ease-in-out 3}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="tbar"><button class="tbtn on" data-t="dark" onclick="setTheme('dark')">🌙暗夜</button><button class="tbtn" data-t="light" onclick="setTheme('light')">☀️暖木</button></div>
+<div class="sbar"><input class="sin" id="sI" placeholder="搜索星宿(角、心、斗…)"><button class="sbtn" id="sBtn">定位</button></div>
+<div class="aBox"><span class="aNum" id="aV">0</span><span class="aDeg">°</span></div>
+<div class="cW">
+<div class="badge" id="bdg">角木蛟</div>
+<svg class="cS" viewBox="0 0 320 320">
+<defs><filter id="gl"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="pgl"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="dG" cx="50%" cy="45%"><stop offset="0%" stop-color="rgba(255,255,255,.06)"/><stop offset="55%" stop-color="rgba(255,255,255,.01)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs>
+<circle cx="160" cy="160" r="158" fill="var(--face)" stroke="var(--ring)" stroke-width="2"/>
+<g id="r4a"></g><g id="r4b"></g>
+<g id="r3"></g>
+<g id="r2"></g>
+<circle cx="160" cy="160" r="90" fill="none" stroke="var(--ring1)" stroke-width=".4"/><circle cx="160" cy="160" r="72" fill="none" stroke="var(--ring1)" stroke-width=".4"/>
+<g id="r1b"></g>
+<circle cx="160" cy="160" r="60" fill="none" stroke="var(--ring3)" stroke-width=".8"/><circle cx="160" cy="160" r="56" fill="var(--face2)" stroke="var(--ring1)" stroke-width=".5"/>
+<g id="r1q"></g>
+<line x1="160" y1="160" x2="160" y2="104" stroke="var(--ring1)" stroke-width=".25"/><line x1="160" y1="160" x2="216" y2="160" stroke="var(--ring1)" stroke-width=".25"/><line x1="160" y1="160" x2="120" y2="120" stroke="var(--ring1)" stroke-width=".18"/><line x1="160" y1="160" x2="200" y2="120" stroke="var(--ring1)" stroke-width=".18"/><line x1="160" y1="160" x2="120" y2="200" stroke="var(--ring1)" stroke-width=".18"/><line x1="160" y1="160" x2="200" y2="200" stroke="var(--ring1)" stroke-width=".18"/>
+<g id="pG" style="transform-origin:160px 160px"><circle cx="160" cy="160" r="56" fill="url(#dG)" opacity=".55"/><polygon points="160,4 152,80 160,66 168,80" fill="var(--ptr)" filter="url(#pgl)" opacity=".95"/><polygon points="160,316 156,266 160,274 164,266" fill="var(--ptr2)"/><circle cx="160" cy="160" r="5.5" fill="var(--ptr)" filter="url(#gl)"/><circle cx="160" cy="160" r="2" fill="#fff" opacity=".9"/></g>
+</svg>
+</div>
+<div class="bRow"><button class="btn a" id="calB">🧭校准</button><button class="btn" id="rstB">↺重置</button></div>
+<div class="card">
+<div class="sr"><span class="sn" id="stN">角木蛟</span><span class="lic" id="lkI">🔓</span></div>
+<div class="tgs"><span class="tag te" id="stE">🌲木</span><span class="tag tq" id="stQ">🐉东方青龙</span></div>
+<div class="pBar">🧭指向 <span id="stP">—</span>　<span style="opacity:.65" id="stS">等待中</span></div>
+<div class="ig">
+<div class="ii"><span class="il">绘制角度</span><span class="iv" id="stR">—</span></div><div class="ii"><span class="il">地理方向</span><span class="iv" id="stD">—</span></div>
+<div class="ii"><span class="il">空间角度</span><span class="iv" id="stA">—</span></div><div class="ii"><span class="il">空间功能</span><span class="iv" id="stF">—</span></div>
+<div class="ii" style="grid-column:1/-1"><span class="il">实用操作</span><span class="iv" id="stO">—</span></div>
+<div class="ii" style="grid-column:1/-1"><span class="il">核心建议</span><span class="iv" id="stW" style="color:var(--gold)">—</span></div>
+</div>
+</div>
+
+<!-- 值日星宿日历 -->
+<div class="card calCard" id="calCard">
+<div class="calHead"><span class="calDate" id="calDate">—</span><span class="calGanzhi" id="calGz">—</span></div>
+<div style="font-size:.7rem;color:var(--muted);margin-bottom:6px"><span id="calLunar">—</span> · 值日星宿</div>
+<div class="calTimeWrap" id="calSegs"></div>
+<div id="calActive" style="font-size:.72rem;color:var(--gold);margin-bottom:4px"></div>
+<div class="calNav"><button class="calNavBtn" onclick="calShift(-1)">◀</button><span class="calNavDate" id="calNavDate">今天</span><button class="calNavBtn" onclick="calShift(1)">▶</button></div>
+</div>
+</div>
+<div class="cal hid" id="calO">
+<div class="calT">🧭校准指南针</div><div class="calR"><div class="calRi"></div></div><div class="calP"><div class="calPb" id="calPb"></div></div><div class="calSt" id="calS">请缓慢旋转手机画大圆 · 0%</div><button class="calX" id="calC">✓完成校准</button>
+</div>
+<script>
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('.tbtn').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});try{localStorage.setItem('ct',t)}catch(e){}}
+try{var sv=localStorage.getItem('ct');if(sv)setTheme(sv)}catch(e){}
+
+(function(){var CX=160,CY=160,SVG='http://www.w3.org/2000/svg';
+
+var stars=[{n:"角木蛟",e:"木",q:"东",s:264.1,E:275.9,d:"东",a:"102.8°~114.7°",f:"文昌位·书房/创作区",p:"放书桌、电脑",w:"书房选角宿，利学业、利创意"},{n:"亢金龙",e:"金",q:"东",s:255.1,E:264.1,d:"东",a:"114.7°~123.6°",f:"门面位·玄关/入口",p:"保持整洁明亮",w:"玄关乱则能量入口受阻"},{n:"氐土貉",e:"土",q:"东",s:240.2,E:255.1,d:"东",a:"123.6°~138.4°",f:"根基位·客厅",p:"客厅核心区",w:"客厅稳则家庭稳"},{n:"房日兔",e:"日",q:"东",s:235.3,E:240.2,d:"东",a:"138.4°~143.3°",f:"养蓄位·次卧/客房",p:"安静、简洁",w:"客房设为养蓄位，客住舒适"},{n:"心月狐",e:"月",q:"东",s:230.3,E:235.3,d:"东",a:"143.3°~148.2°",f:"决策位·主卧",p:"放床，夫妻同心",w:"主卧是家庭决策核心"},{n:"尾火虎",e:"火",q:"东",s:212.6,E:230.3,d:"东",a:"148.2°~166.0°",f:"生长位·儿童房",p:"孩子房间",w:"儿童房在尾宿，利于成长"},{n:"箕水豹",e:"水",q:"东",s:201.5,E:212.6,d:"东",a:"166.0°~177.1°",f:"舒展位·阳台",p:"放松、活动",w:"阳台在箕宿，适合晨练饮茶"},{n:"斗木獬",e:"木",q:"北",s:176.0,E:201.5,d:"北",a:"177.1°~202.7°",f:"权衡位·书房/办公区",p:"重要文件存放",w:"斗宿是做判断的好位置"},{n:"牛金牛",e:"金",q:"北",s:168.1,E:176.0,d:"北",a:"202.7°~210.6°",f:"耕耘位·工作台",p:"长期项目区",w:"持续工作放在牛宿，利于耕耘"},{n:"女土蝠",e:"土",q:"北",s:156.2,E:168.1,d:"北",a:"210.6°~222.4°",f:"巧思位·手工/创作区",p:"手工、缝纫、DIY",w:"女宿激发巧思匠心"},{n:"虚日鼠",e:"日",q:"北",s:146.3,E:156.2,d:"北",a:"222.4°~232.3°",f:"静定位·冥想/静室",p:"安静、独处",w:"虚宿适合打坐、冥想"},{n:"危月燕",e:"月",q:"北",s:129.5,E:146.3,d:"北",a:"232.3°~249.1°",f:"惕厉位·储物间",p:"放不常用但有价值的物品",w:"危宿使人保持警惕"},{n:"室火猪",e:"火",q:"北",s:113.6,E:129.5,d:"北",a:"249.1°~264.8°",f:"安寝位·卧室",p:"主卧或次卧",w:"室宿天然利于安睡"},{n:"壁水貐",e:"水",q:"北",s:104.8,E:113.6,d:"北",a:"264.8°~273.7°",f:"护卫位·保险柜",p:"放重要物品",w:"壁宿利于守护核心资产"},{n:"奎木狼",e:"木",q:"西",s:88.9,E:104.8,d:"西",a:"273.7°~289.5°",f:"调度位·餐厅/厨房",p:"家人聚餐",w:"奎宿主调度，适合家庭活动"},{n:"娄金狗",e:"金",q:"西",s:77.1,E:88.9,d:"西",a:"289.5°~301.3°",f:"联络位·客厅/休闲区",p:"朋友来访区域",w:"娄宿利于人际联络"},{n:"胃土雉",e:"土",q:"西",s:63.3,E:77.1,d:"西",a:"301.3°~315.1°",f:"吸收位·厨房/储藏区",p:"食物储存",w:"胃宿利于饮食健康"},{n:"昴日鸡",e:"日",q:"西",s:52.4,E:63.3,d:"西",a:"315.1°~326.0°",f:"威仪位·主入口/玄关",p:"展示主人气质",w:"昴宿在入口处，自带威严"},{n:"毕月乌",e:"月",q:"西",s:36.5,E:52.4,d:"西",a:"326.0°~341.8°",f:"捕获位·书房/工作区",p:"重要合同/文件",w:"毕宿利于捕获成果"},{n:"觜火猴",e:"火",q:"西",s:34.6,E:36.5,d:"西",a:"341.8°~343.7°",f:"细节位·工作室",p:"精细工作",w:"觜宿主细节，利于精密操作"},{n:"参水猿",e:"水",q:"西",s:25.6,E:34.6,d:"西",a:"343.7°~352.5°",f:"交割位·门口/玄关",p:"过渡、交接",w:"参宿主事务交割"},{n:"井木犴",e:"木",q:"南",s:352.7,E:25.6,d:"南",x:!0,a:"352.5°~25°",f:"润泽位·厨房/茶水间",p:"水源、烹饪",w:"井宿在水位，利于水源能量"},{n:"鬼金羊",e:"金",q:"南",s:348.8,E:352.7,d:"南",a:"25°~28.9°",f:"静思位·书房/静室",p:"思考、策划",w:"鬼宿利于深度思考"},{n:"柳土獐",e:"土",q:"南",s:333.9,E:348.8,d:"南",a:"28.9°~43.7°",f:"艺术位·音乐/画室",p:"艺术创作",w:"柳宿主艺术、美"},{n:"星日马",e:"日",q:"南",s:327.0,E:333.9,d:"南",a:"43.7°~50.6°",f:"荣耀位·客厅/展示区",p:"展示奖状、作品",w:"星宿主荣誉，适合展示区"},{n:"张月鹿",e:"月",q:"南",s:309.2,E:327.0,d:"南",a:"50.6°~68.3°",f:"汇聚位·餐厅/客厅",p:"家庭聚会",w:"张宿主汇聚人气"},{n:"翼火蛇",e:"火",q:"南",s:291.4,E:309.2,d:"南",a:"68.3°~86.1°",f:"远志位·书房/阳台",p:"眺望、思考远方",w:"翼宿主远行、大志"},{n:"轸水蚓",e:"水",q:"南",s:275.9,E:291.4,d:"南",a:"86.1°~102.8°",f:"归整位·衣帽间/储物",p:"收纳整理",w:"轸宿主归位、整齐"}];
+var qC={东:'var(--c-east)',北:'var(--c-north)',西:'var(--c-west)',南:'var(--c-south)'};
+var eI={木:'🌲',金:'⚜️',土:'⛰️',日:'☀️',月:'🌙',火:'🔥',水:'💧'};
+var qF={东:'🐉东方青龙',北:'🐢北方玄武',西:'🐅西方白虎',南:'🦅南方朱雀'};
+var m24a=["午","丁","未","坤","申","庚","酉","辛","戌","乾","亥","壬","子","癸","丑","艮","寅","甲","卯","乙","辰","巽","巳","丙"];
+var m24c={子:"#38bdf8",午:"#fbbf24",卯:"#2dd4bf",酉:"#e2e8f0"};
+function m24n(a){var x=((a%360)+360)%360;return m24a[Math.floor(x/15)%24]}
+var h64n=["乾","夬","大有","大壮","小畜","需","大畜","泰","履","兑","睽","归妹","中孚","节","损","临","同人","革","离","丰","家人","既济","贲","明夷","无妄","随","噬嗑","震","益","屯","颐","复","姤","大过","鼎","恒","巽","井","蛊","升","讼","困","未济","解","涣","坎","蒙","师","遁","咸","旅","小过","渐","蹇","艮","谦","否","萃","晋","豫","观","比","剥","坤"];
+var bg=[{t:'☲',a:0},{t:'☴',a:315},{t:'☳',a:270},{t:'☶',a:225},{t:'☵',a:180},{t:'☰',a:135},{t:'☱',a:90},{t:'☷',a:45}];
+var quads=[{n:'朱雀',a:0,q:'南'},{n:'玄武',a:180,q:'北'},{n:'青龙',a:270,q:'东'},{n:'白虎',a:90,q:'西'}];
+
+function rad(a){return(a-90)*Math.PI/180}
+function p(r,a){return[CX+r*Math.cos(rad(a)),CY+r*Math.sin(rad(a))]}
+function arc(sA,eA,O,I){var la=eA-sA>180?1:0;var x1o=CX+O*Math.cos(rad(sA)),y1o=CY+O*Math.sin(rad(sA));var x2o=CX+O*Math.cos(rad(eA)),y2o=CY+O*Math.sin(rad(eA));var x1i=CX+I*Math.cos(rad(sA)),y1i=CY+I*Math.sin(rad(sA));var x2i=CX+I*Math.cos(rad(eA)),y2i=CY+I*Math.sin(rad(eA));return'M'+x1o+','+y1o+' A'+O+','+O+' 0 '+la+' 1 '+x2o+','+y2o+' L'+x2i+','+y2i+' A'+I+','+I+' 0 '+la+' 0 '+x1i+','+y1i+' Z'}
+function mk(tag,atts){var e=document.createElementNS(SVG,tag);for(var k in atts)e.setAttribute(k,atts[k]);return e}
+
+var sg=document.getElementById('r4a'),sl=document.getElementById('r4b');
+sg.innerHTML='';sl.innerHTML='';
+for(var i=0;i<stars.length;i++){var s=stars[i];var d=s.x?arc(s.s,360,158,128)+' '+arc(0,s.E,158,128):arc(s.s,s.E,158,128);var pa=mk('path',{d:d,fill:qC[s.q],'fill-opacity':getComputedStyle(document.documentElement).getPropertyValue('--so').trim()||'0.4',stroke:'var(--ss)','stroke-width':'0.7','data-index':i});pa.style.cursor='pointer';pa.addEventListener('click',(function(idx){return function(){tl(idx)}})(i));sg.appendChild(pa);var sp=s.x?360-s.s+s.E:s.E-s.s;if(sp>=5){var mid=s.x?((s.s+s.E+360)/2)%360:(s.s+s.E)/2;var xy=p(142,mid);var t=mk('text',{x:xy[0],y:xy[1],'text-anchor':'middle','dominant-baseline':'central',fill:'#fff','font-size':'11','font-weight':'500','pointer-events':'none'});t.textContent=s.n.charAt(0);sl.appendChild(t)}}
+
+var hg=document.getElementById('r3');hg.innerHTML='';
+for(var i=0;i<64;i++){var a=(i*5.625%360+360)%360;var xy1=p(126,a),xy2=p(113,a);hg.appendChild(mk('line',{x1:xy1[0],y1:xy1[1],x2:xy2[0],y2:xy2[1],stroke:i%8===0?'var(--ring3)':'var(--ring1)','stroke-width':i%8===0?'0.8':'0.35','pointer-events':'none'}));var xy3=p(119,a);var t=mk('text',{x:xy3[0],y:xy3[1],'text-anchor':'middle','dominant-baseline':'central',fill:'rgba(190,210,225,0.6)','font-size':'6','pointer-events':'none'});t.textContent=h64n[i];hg.appendChild(t)}
+
+var mg=document.getElementById('r2');mg.innerHTML='';
+for(var i=0;i<24;i++){var a=i*15;var xy1=p(111,a),xy2=p(98,a);var im=m24a[i]in m24c;mg.appendChild(mk('line',{x1:xy1[0],y1:xy1[1],x2:xy2[0],y2:xy2[1],stroke:m24c[m24a[i]]||'rgba(180,195,210,0.45)','stroke-width':im?'1.8':'0.6','pointer-events':'none'}));var xy3=p(104,a+7.5);var t=mk('text',{x:xy3[0],y:xy3[1],'text-anchor':'middle','dominant-baseline':'central',fill:m24c[m24a[i]]||'rgba(210,220,230,0.85)','font-size':im?'13':'10','font-weight':im?'700':'400','pointer-events':'none'});t.textContent=m24a[i];mg.appendChild(t)}
+
+var bgg=document.getElementById('r1b');bgg.innerHTML='';
+for(var i=0;i<bg.length;i++){var b=bg[i];var xy1=p(90,b.a),xy2=p(72,b.a);bgg.appendChild(mk('line',{x1:xy1[0],y1:xy1[1],x2:xy2[0],y2:xy2[1],stroke:'var(--ring2)','stroke-width':'0.45','pointer-events':'none'}));var xy3=p(81,b.a);var t=mk('text',{x:xy3[0],y:xy3[1],'text-anchor':'middle','dominant-baseline':'central',fill:'rgba(190,210,225,0.55)','font-size':'13','font-weight':'500','pointer-events':'none'});t.textContent=b.t;bgg.appendChild(t)}
+
+var qg=document.getElementById('r1q');qg.innerHTML='';
+for(var i=0;i<quads.length;i++){var q=quads[i];var xy=p(36,q.a);var t=mk('text',{x:xy[0],y:xy[1],'text-anchor':'middle','dominant-baseline':'central',fill:qC[q.q],'font-size':'12','font-weight':'bold','letter-spacing':'0.1em','pointer-events':'none'});t.textContent=q.n;qg.appendChild(t)}
+
+var ptrG=document.getElementById('pG'),aEl=document.getElementById('aV'),bEl=document.getElementById('bdg'),cov=document.getElementById('calO'),cbb=document.getElementById('calPb'),cs=document.getElementById('calS'),ssEl=document.getElementById('stS');
+var curA=0,tgtA=0,af=null,active=false,lock=-1,filtH=0,SM=.10;
+var calOff=0;try{var ls=localStorage.getItem('cc9');if(ls)calOff=parseFloat(ls)}catch(e){}
+var calib=false,samples=[],calStart=0,CD=6000;
+
+function starAt(a){var x=((a%360)+360)%360;for(var i=0;i<stars.length;i++){var s=stars[i];if(s.x){if(x>=s.s||x<=s.E)return i}else if(x>=s.s&&x<s.E)return i}return 0}
+function updateUI(){var pointed=((filtH+calOff+180)%360+360)%360;aEl.textContent=Math.round(pointed);var idx=lock!==-1?lock:starAt(pointed);bEl.textContent=stars[idx].n;var ps=document.querySelectorAll('#r4a path');for(var i=0;i<ps.length;i++){var p=ps[i];var pi=parseInt(p.getAttribute('data-index'));var so=getComputedStyle(document.documentElement).getPropertyValue('--so').trim()||'0.4';if(pi===idx){p.setAttribute('fill-opacity','0.7');p.setAttribute('stroke','#fff');p.setAttribute('stroke-width','2.2')}else if(pi===lock){p.setAttribute('fill-opacity','0.55');p.setAttribute('stroke','var(--ptr)');p.setAttribute('stroke-width','1.8')}else{p.setAttribute('fill-opacity',so);p.setAttribute('stroke','var(--ss)');p.setAttribute('stroke-width','0.7')}}upCard(idx);document.getElementById('stP').textContent=Math.round(pointed)+'° / '+m24n(pointed)}
+function upCard(i){var s=stars[i];document.getElementById('stN').textContent=s.n;document.getElementById('stE').textContent=(eI[s.e]||'')+' '+s.e;document.getElementById('stQ').textContent=qF[s.q];document.getElementById('stR').textContent=s.x?s.s.toFixed(1)+'°→360° / 0°→'+s.E.toFixed(1)+'°':s.s.toFixed(1)+'° ~ '+s.E.toFixed(1)+'°';document.getElementById('stD').textContent=s.d;document.getElementById('stA').textContent=s.a;document.getElementById('stF').textContent=s.f;document.getElementById('stO').textContent=s.p;document.getElementById('stW').textContent=s.w}
+function tl(i){if(lock===i){lock=-1;document.getElementById('lkI').textContent='🔓'}else{lock=i;upCard(i);document.getElementById('lkI').textContent='🔒'}updateUI()}
+document.getElementById('lkI').addEventListener('click',function(e){e.stopPropagation();if(lock!==-1){lock=-1;document.getElementById('lkI').textContent='🔓';updateUI()}});
+function anim(){var d=tgtA-curA;if(Math.abs(d)<.05){curA=tgtA;ptrG.style.transform='rotate('+curA+'deg)';updateUI();af=null;return}curA+=d*.22;ptrG.style.transform='rotate('+curA+'deg)';updateUI();af=requestAnimationFrame(anim)}
+function setTarget(){var raw=(filtH+calOff+180)%360;var cn=((curA%360)+360)%360,tn=((raw%360)+360)%360,d=tn-cn;if(d>180)d-=360;else if(d<-180)d+=360;tgtA=curA+d;if(!af)af=requestAnimationFrame(anim)}
+function procHeading(raw){if(raw==null||isNaN(raw))return;var d=raw-filtH;if(d>180)d-=360;else if(d<-180)d+=360;filtH+=SM*d;filtH=((filtH%360)+360)%360;if(calib){samples.push(raw);var e=Date.now()-calStart,p=Math.min(e/CD,1);cbb.style.width=(p*100)+'%';cs.textContent='请缓慢旋转手机画大圆 · '+Math.round(p*100)+'%';if(e>=CD)finishCal()}else setTarget()}
+function handleOri(e){if(!active)return;var h=e.webkitCompassHeading;if(h===undefined&&e.alpha!==null)h=(360-e.alpha)%360;if(h!==undefined){ssEl.textContent='✓工作中';ssEl.style.color='#4ade80';procHeading(h)}}
+function startCompass(){if(window.DeviceOrientationEvent){if(typeof DeviceOrientationEvent.requestPermission==='function'){active=false;ssEl.textContent='需授权';ssEl.style.color='var(--muted)';document.body.addEventListener('click',async function ask(){try{var p=await DeviceOrientationEvent.requestPermission();if(p==='granted'){window.addEventListener('deviceorientation',handleOri);active=true;ssEl.textContent='✓工作中';ssEl.style.color='#4ade80'}}catch(e){ssEl.textContent='授权失败'}document.body.removeEventListener('click',ask)},{once:true})}else{window.addEventListener('deviceorientation',handleOri);active=true;ssEl.textContent='✓工作中';ssEl.style.color='#4ade80'}}else{ssEl.textContent='不支持';ssEl.style.color='#f87171'}}
+function startCal(){if(calib)return;calib=true;samples=[];calStart=Date.now();cov.classList.remove('hid');cbb.style.width='0%';cs.textContent='请缓慢旋转手机画大圆 · 0%'}
+function finishCal(){if(!calib)return;calib=false;cov.classList.add('hid');if(samples.length>20){var a=samples.reduce(function(a,b){return a+b},0)/samples.length;calOff=Math.round((360-a)*10)/10;try{localStorage.setItem('cc9',String(calOff))}catch(e){}alert('✅校准完成！偏移'+calOff.toFixed(1)+'°')}else alert('⚠️样本不足');setTarget()}
+function resetCal(){calOff=0;try{localStorage.removeItem('cc9')}catch(e){}alert('已重置');setTarget()}
+document.getElementById('calB').addEventListener('click',startCal);document.getElementById('rstB').addEventListener('click',resetCal);document.getElementById('calC').addEventListener('click',function(){if(calib)finishCal();else cov.classList.add('hid')});
+document.getElementById('sBtn').addEventListener('click',function(){var kw=document.getElementById('sI').value.trim().toLowerCase();if(!kw)return;var idx=-1;for(var i=0;i<stars.length;i++){if(stars[i].n.indexOf(kw)!==-1||stars[i].n.charAt(0)===kw){idx=i;break}}if(idx===-1){alert('未找到');return}var s=stars[idx],mid=s.x?((s.s+s.E+360)/2)%360:(s.s+s.E)/2;lock=idx;upCard(idx);document.getElementById('lkI').textContent='🔒';var orig=filtH;filtH=((mid-180-calOff)%360+360)%360;setTarget();var ps=document.querySelectorAll('#r4a path[data-index="'+idx+'"]');for(var i=0;i<ps.length;i++){ps[i].classList.add('sf');setTimeout((function(p){return function(){p.classList.remove('sf')}})(ps[i]),1200)}setTimeout(function(){filtH=orig;setTarget()},600)});
+document.getElementById('sI').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('sBtn').click()});
+setTarget();startCompass();
+})();
+
+// ═══════════ 值日星宿日历 ═══════════
+var calData={
+"0501":{l:"三月十五",g:"乙亥",s:[["角宿","00:00","16:08"],["亢宿","16:09","24:00"]]},
+"0502":{l:"三月十六",g:"丙子",s:[["亢宿","00:00","12:36"],["氐宿","12:37","24:00"]]},
+"0503":{l:"三月十七",g:"丁丑",s:[["氐宿","00:00","19:21"],["房宿","19:22","24:00"]]},
+"0504":{l:"三月十八",g:"戊寅",s:[["房宿","00:00","08:53"],["心宿","08:54","18:59"],["尾宿","19:00","24:00"]]},
+"0505":{l:"三月十九",g:"己卯",s:[["尾宿","00:00","24:00"]]},
+"0506":{l:"三月二十",g:"庚辰",s:[["尾宿","00:00","07:53"],["箕宿","07:54","22:45"],["斗宿","22:46","24:00"]]},
+"0507":{l:"三月廿一",g:"辛巳",s:[["斗宿","00:00","24:00"]]},
+"0508":{l:"三月廿二",g:"壬午",s:[["斗宿","00:00","19:50"],["牛宿","19:51","24:00"]]},
+"0509":{l:"三月廿三",g:"癸未",s:[["牛宿","00:00","11:16"],["女宿","11:17","24:00"]]},
+"0510":{l:"三月廿四",g:"甲申",s:[["女宿","00:00","07:48"],["虚宿","07:49","23:11"],["危宿","23:11","24:00"]]},
+"0511":{l:"三月廿五",g:"乙酉",s:[["危宿","00:00","24:00"]]},
+"0512":{l:"三月廿六",g:"丙戌",s:[["危宿","00:00","05:34"],["室宿","05:35","24:00"]]},
+"0513":{l:"三月廿七",g:"丁亥",s:[["室宿","00:00","18:03"],["壁宿","18:04","24:00"]]},
+"0514":{l:"三月廿八",g:"戊子",s:[["壁宿","00:00","08:25"],["奎宿","08:26","24:00"]]},
+"0515":{l:"三月廿九",g:"己丑",s:[["奎宿","00:00","16:31"],["娄宿","16:32","24:00"]]},
+"0516":{l:"三月三十",g:"庚寅",s:[["娄宿","00:00","10:30"],["胃宿","10:31","24:00"]]},
+"0517":{l:"四月初一",g:"辛卯",s:[["胃宿","00:00","09:10"],["昴宿","09:11","24:00"]]},
+"0518":{l:"四月初二",g:"壬辰",s:[["昴宿","00:00","01:52"],["毕宿","01:53","24:00"]]},
+"0519":{l:"四月初三",g:"癸巳",s:[["毕宿","00:00","01:39"],["觜宿","01:40","03:10"],["参宿","03:11","19:52"],["井宿","19:53","24:00"]]},
+"0520":{l:"四月初四",g:"甲午",s:[["井宿","00:00","24:00"]]},
+"0521":{l:"四月初五",g:"乙未",s:[["井宿","00:00","21:04"],["鬼宿","21:05","23:45"],["柳宿","23:46","24:00"]]},
+"0522":{l:"四月初六",g:"丙申",s:[["柳宿","00:00","21:21"],["星宿","21:22","24:00"]]},
+"0523":{l:"四月初七",g:"丁酉",s:[["星宿","00:00","06:54"],["张宿","06:55","24:00"]]},
+"0524":{l:"四月初八",g:"戊戌",s:[["张宿","00:00","15:47"],["翼宿","15:48","24:00"]]},
+"0525":{l:"四月初九",g:"己亥",s:[["翼宿","00:00","24:00"]]},
+"0526":{l:"四月初十",g:"庚子",s:[["翼宿","00:00","09:18"],["轸宿","09:19","24:00"]]},
+"0527":{l:"四月十一",g:"辛丑",s:[["轸宿","00:00","23:54"],["角宿","23:55","24:00"]]},
+"0528":{l:"四月十二",g:"壬寅",s:[["角宿","00:00","24:00"]]},
+"0529":{l:"四月十三",g:"癸卯",s:[["角宿","00:00","00:39"],["亢宿","00:40","16:58"],["氐宿","16:59","24:00"]]},
+"0530":{l:"四月十四",g:"甲辰",s:[["氐宿","00:00","24:00"]]},
+"0531":{l:"四月十五",g:"乙巳",s:[["氐宿","00:00","04:45"],["房宿","04:46","13:07"],["心宿","13:08","24:00"]]},
+"0601":{l:"四月十六",g:"丙午",s:[["心宿","00:00","03:56"],["尾宿","03:57","24:00"]]},
+"0602":{l:"四月十七",g:"丁未",s:[["尾宿","00:00","13:00"],["箕宿","13:01","24:00"]]},
+"0603":{l:"四月十八",g:"戊申",s:[["箕宿","00:00","08:14"],["斗宿","08:15","24:00"]]},
+"0604":{l:"四月十九",g:"己酉",s:[["斗宿","00:00","24:00"]]},
+"0605":{l:"四月二十",g:"庚戌",s:[["斗宿","00:00","02:34"],["牛宿","02:35","16:14"],["女宿","16:15","24:00"]]},
+"0606":{l:"四月廿一",g:"辛亥",s:[["女宿","00:00","15:05"],["虚宿","15:06","24:00"]]},
+"0607":{l:"四月廿二",g:"壬子",s:[["虚宿","00:00","09:20"],["危宿","09:21","24:00"]]},
+"0608":{l:"四月廿三",g:"癸丑",s:[["危宿","00:00","15:46"],["室宿","15:47","24:00"]]},
+"0609":{l:"四月廿四",g:"甲寅",s:[["室宿","00:00","24:00"]]},
+"0610":{l:"四月廿五",g:"乙卯",s:[["室宿","00:00","00:07"],["壁宿","00:08","18:53"],["奎宿","18:54","24:00"]]},
+"0611":{l:"四月廿六",g:"丙辰",s:[["奎宿","00:00","24:00"]]},
+"0612":{l:"四月廿七",g:"丁巳",s:[["娄宿","00:00","21:32"],["胃宿","21:33","24:00"]]},
+"0613":{l:"四月廿八",g:"戊午",s:[["胃宿","00:00","21:31"],["昴宿","21:32","24:00"]]},
+"0614":{l:"四月廿九",g:"己未",s:[["昴宿","00:00","13:38"],["毕宿","13:39","24:00"]]},
+"0615":{l:"五月初一",g:"庚申",s:[["毕宿","00:00","11:42"],["觜宿","11:43","14:48"],["参宿","14:49","24:00"]]},
+"0616":{l:"五月初二",g:"辛酉",s:[["参宿","00:00","03:54"],["井宿","03:55","24:00"]]},
+"0617":{l:"五月初三",g:"壬戌",s:[["井宿","00:00","24:00"]]},
+"0618":{l:"五月初四",g:"癸亥",s:[["井宿","00:00","04:22"],["鬼宿","04:23","06:11"],["柳宿","06:12","24:00"]]},
+"0619":{l:"五月初五",g:"甲子",s:[["柳宿","00:00","04:21"],["星宿","04:22","14:22"],["张宿","14:23","24:00"]]},
+"0620":{l:"五月初六",g:"乙丑",s:[["张宿","00:00","24:00"]]},
+"0621":{l:"五月初七",g:"丙寅",s:[["张宿","00:00","01:46"],["翼宿","01:47","24:00"]]},
+"0622":{l:"五月初八",g:"丁卯",s:[["翼宿","00:00","14:28"],["轸宿","14:29","24:00"]]},
+"0623":{l:"五月初九",g:"戊辰",s:[["轸宿","00:00","24:00"]]},
+"0624":{l:"五月初十",g:"己巳",s:[["轸宿","00:00","05:47"],["角宿","05:48","24:00"]]},
+"0625":{l:"五月十一",g:"庚午",s:[["角宿","00:00","06:28"],["亢宿","06:29","24:00"]]},
+"0626":{l:"五月十二",g:"辛未",s:[["亢宿","00:00","02:17"],["氐宿","02:18","24:00"]]},
+"0627":{l:"五月十三",g:"壬申",s:[["氐宿","00:00","09:27"],["房宿","09:28","17:58"],["心宿","17:59","24:00"]]},
+"0628":{l:"五月十四",g:"癸酉",s:[["心宿","00:00","09:21"],["尾宿","09:22","24:00"]]},
+"0629":{l:"五月十五",g:"甲戌",s:[["尾宿","00:00","17:04"],["箕宿","17:05","24:00"]]},
+"0630":{l:"五月十六",g:"乙亥",s:[["箕宿","00:00","12:35"],["斗宿","12:36","24:00"]]},
+"0701":{l:"五月十七",g:"丙子",s:[["斗宿","00:00","24:00"]]},
+"0702":{l:"五月十八",g:"丁丑",s:[["斗宿","00:00","10:23"],["牛宿","10:24","20:18"],["女宿","20:19","24:00"]]},
+"0703":{l:"五月十九",g:"戊寅",s:[["女宿","00:00","18:43"],["虚宿","18:44","24:00"]]},
+"0704":{l:"五月二十",g:"己卯",s:[["虚宿","00:00","18:43"],["危宿","18:44","24:00"]]},
+"0705":{l:"五月廿一",g:"庚辰",s:[["危宿","00:00","19:39"],["室宿","19:40","24:00"]]},
+"0706":{l:"五月廿二",g:"辛巳",s:[["室宿","00:00","24:00"]]},
+"0707":{l:"五月廿三",g:"壬午",s:[["室宿","00:00","10:18"],["壁宿","10:19","24:00"]]},
+"0708":{l:"五月廿四",g:"癸未",s:[["壁宿","00:00","00:06"],["奎宿","00:07","24:00"]]},
+"0709":{l:"五月廿五",g:"甲申",s:[["奎宿","00:00","10:40"],["娄宿","10:41","24:00"]]},
+"0710":{l:"五月廿六",g:"乙酉",s:[["娄宿","00:00","05:24"],["胃宿","05:25","24:00"]]},
+"0711":{l:"五月廿七",g:"丙戌",s:[["胃宿","00:00","05:29"],["昴宿","05:30","22:32"],["毕宿","22:33","24:00"]]},
+"0712":{l:"五月廿八",g:"丁亥",s:[["毕宿","00:00","22:29"],["觜宿","22:30","24:00"]]},
+"0713":{l:"五月廿九",g:"戊子",s:[["参宿","00:00","16:50"],["井宿","16:51","24:00"]]},
+"0714":{l:"六月初一",g:"己丑",s:[["井宿","00:00","24:00"]]},
+"0715":{l:"六月初二",g:"庚寅",s:[["井宿","00:00","16:15"],["鬼宿","16:16","19:08"],["柳宿","19:09","24:00"]]},
+"0716":{l:"六月初三",g:"辛卯",s:[["柳宿","00:00","14:33"],["星宿","14:34","24:00"]]},
+"0717":{l:"六月初四",g:"壬辰",s:[["星宿","00:00","01:30"],["张宿","01:31","24:00"]]},
+"0718":{l:"六月初五",g:"癸巳",s:[["张宿","00:00","07:46"],["翼宿","07:47","24:00"]]},
+"0719":{l:"六月初六",g:"甲午",s:[["翼宿","00:00","24:00"]]},
+"0720":{l:"六月初七",g:"乙未",s:[["翼宿","00:00","01:21"],["轸宿","01:22","24:00"]]},
+"0721":{l:"六月初八",g:"丙申",s:[["轸宿","00:00","10:27"],["角宿","10:28","24:00"]]},
+"0722":{l:"六月初九",g:"丁酉",s:[["角宿","00:00","10:52"],["亢宿","10:53","24:00"]]},
+"0723":{l:"六月初十",g:"戊戌",s:[["亢宿","00:00","07:14"],["氐宿","07:15","24:00"]]},
+"0724":{l:"六月十一",g:"己亥",s:[["氐宿","00:00","13:59"],["房宿","14:00","24:00"]]},
+"0725":{l:"六月十二",g:"庚子",s:[["房宿","00:00","03:32"],["心宿","03:33","13:38"],["尾宿","13:39","24:00"]]},
+"0726":{l:"六月十三",g:"辛丑",s:[["尾宿","00:00","24:00"]]},
+"0727":{l:"六月十四",g:"壬寅",s:[["尾宿","00:00","02:30"],["箕宿","02:31","17:19"],["斗宿","17:20","24:00"]]},
+"0728":{l:"六月十五",g:"癸卯",s:[["斗宿","00:00","24:00"]]},
+"0729":{l:"六月十六",g:"甲辰",s:[["斗宿","00:00","14:20"],["牛宿","14:21","24:00"]]},
+"0730":{l:"六月十七",g:"乙巳",s:[["牛宿","00:00","05:44"],["女宿","05:45","24:00"]]},
+"0731":{l:"六月十八",g:"丙午",s:[["女宿","00:00","02:29"],["虚宿","02:30","18:03"],["危宿","18:04","24:00"]]},
+"0801":{l:"六月十九",g:"丁未",s:[["危宿","00:00","24:00"]]},
+"0802":{l:"六月二十",g:"戊申",s:[["危宿","00:00","02:13"],["室宿","02:14","24:00"]]},
+"0803":{l:"六月廿一",g:"己酉",s:[["室宿","00:00","14:48"],["壁宿","14:49","24:00"]]},
+"0804":{l:"六月廿二",g:"庚戌",s:[["壁宿","00:00","09:11"],["奎宿","09:12","24:00"]]},
+"0805":{l:"六月廿三",g:"辛亥",s:[["奎宿","00:00","16:12"],["娄宿","16:13","24:00"]]},
+"0806":{l:"六月廿四",g:"壬子",s:[["娄宿","00:00","14:28"],["胃宿","14:29","24:00"]]},
+"0807":{l:"六月廿五",g:"癸丑",s:[["胃宿","00:00","15:24"],["昴宿","15:25","24:00"]]},
+"0808":{l:"六月廿六",g:"甲寅",s:[["昴宿","00:00","06:16"],["毕宿","06:17","24:00"]]},
+"0809":{l:"六月廿七",g:"乙卯",s:[["毕宿","00:00","06:13"],["觜宿","06:14","09:27"],["参宿","09:28","23:50"],["井宿","23:51","24:00"]]},
+"0810":{l:"六月廿八",g:"丙辰",s:[["井宿","00:00","24:00"]]},
+"0811":{l:"六月廿九",g:"丁巳",s:[["井宿","00:00","24:00"]]},
+"0812":{l:"七月初一",g:"戊午",s:[["井宿","00:00","00:53"],["鬼宿","00:54","02:42"],["柳宿","02:43","24:00"]]},
+"0813":{l:"七月初二",g:"己未",s:[["柳宿","00:00","00:39"],["星宿","00:40","10:12"],["张宿","10:13","24:00"]]},
+"0814":{l:"七月初三",g:"庚申",s:[["张宿","00:00","20:49"],["翼宿","20:50","24:00"]]},
+"0815":{l:"七月初四",g:"辛酉",s:[["翼宿","00:00","24:00"]]},
+"0816":{l:"七月初五",g:"壬戌",s:[["翼宿","00:00","07:34"],["轸宿","07:35","24:00"]]},
+"0817":{l:"七月初六",g:"癸亥",s:[["轸宿","00:00","22:13"],["角宿","22:14","24:00"]]},
+"0818":{l:"七月初七",g:"甲子",s:[["角宿","00:00","22:02"],["亢宿","22:03","24:00"]]},
+"0819":{l:"七月初八",g:"乙丑",s:[["亢宿","00:00","13:28"],["氐宿","13:29","24:00"]]},
+"0820":{l:"七月初九",g:"丙寅",s:[["氐宿","00:00","24:00"]]},
+"0821":{l:"七月初十",g:"丁卯",s:[["氐宿","00:00","00:39"],["房宿","00:40","08:33"],["心宿","08:34","23:57"],["尾宿","23:58","24:00"]]},
+"0822":{l:"七月十一",g:"戊辰",s:[["尾宿","00:00","24:00"]]},
+"0823":{l:"七月十二",g:"己巳",s:[["尾宿","00:00","08:21"],["箕宿","08:22","24:00"]]},
+"0824":{l:"七月十三",g:"庚午",s:[["箕宿","00:00","03:48"],["斗宿","03:49","24:00"]]},
+"0825":{l:"七月十四",g:"辛未",s:[["斗宿","00:00","22:17"],["牛宿","22:18","24:00"]]},
+"0826":{l:"七月十五",g:"壬申",s:[["牛宿","00:00","11:11"],["女宿","11:12","22:13"]]},
+"0827":{l:"七月十六",g:"癸酉",s:[["牛宿","00:00","00:09"],["女宿","00:10","09:49"],["虚宿","09:50","24:00"]]},
+"0828":{l:"七月十七",g:"甲戌",s:[["虚宿","00:00","03:51"],["危宿","03:52","24:00"]]},
+"0829":{l:"七月十八",g:"乙亥",s:[["危宿","00:00","10:08"],["室宿","10:09","24:00"]]},
+"0830":{l:"七月十九",g:"丙子",s:[["室宿","00:00","18:36"],["壁宿","18:37","24:00"]]},
+"0831":{l:"七月二十",g:"丁丑",s:[["壁宿","00:00","13:39"],["奎宿","13:40","24:00"]]},
+"0901":{l:"七月廿一",g:"戊寅",s:[["奎宿","00:00","19:40"],["娄宿","19:41","24:00"]]},
+"0902":{l:"七月廿二",g:"己卯",s:[["娄宿","00:00","17:58"],["胃宿","17:59","24:00"]]},
+"0903":{l:"七月廿三",g:"庚辰",s:[["胃宿","00:00","19:07"],["昴宿","19:08","24:00"]]},
+"0904":{l:"七月廿四",g:"辛巳",s:[["昴宿","00:00","14:06"],["毕宿","14:07","24:00"]]},
+"0905":{l:"七月廿五",g:"壬午",s:[["毕宿","00:00","14:58"],["觜宿","14:59","16:43"],["参宿","16:44","24:00"]]},
+"0906":{l:"七月廿六",g:"癸未",s:[["参宿","00:00","07:31"],["井宿","07:32","24:00"]]},
+"0907":{l:"七月廿七",g:"甲申",s:[["井宿","00:00","24:00"]]},
+"0908":{l:"七月廿八",g:"乙酉",s:[["井宿","00:00","09:45"],["鬼宿","09:46","13:32"],["柳宿","13:33","24:00"]]},
+"0909":{l:"七月廿九",g:"丙戌",s:[["柳宿","00:00","08:59"],["星宿","09:00","21:11"],["张宿","21:12","24:00"]]},
+"0910":{l:"八月初一",g:"丁亥",s:[["张宿","00:00","24:00"]]},
+"0911":{l:"八月初二",g:"戊子",s:[["张宿","00:00","03:25"],["翼宿","03:26","24:00"]]},
+"0912":{l:"八月初三",g:"己丑",s:[["翼宿","00:00","20:17"],["轸宿","20:18","24:00"]]},
+"0913":{l:"八月初四",g:"庚寅",s:[["轸宿","00:00","24:00"]]},
+"0914":{l:"八月初五",g:"辛卯",s:[["轸宿","00:00","04:37"],["角宿","04:38","24:00"]]},
+"0915":{l:"八月初六",g:"壬辰",s:[["角宿","00:00","04:29"],["亢宿","04:30","24:00"]]},
+"0916":{l:"八月初七",g:"癸巳",s:[["亢宿","00:00","00:35"],["氐宿","00:36","24:00"]]},
+"0917":{l:"八月初八",g:"甲午",s:[["氐宿","00:00","06:24"],["房宿","06:25","17:26"],["心宿","17:27","24:00"]]},
+"0918":{l:"八月初九",g:"乙未",s:[["心宿","00:00","06:07"],["尾宿","06:08","24:00"]]},
+"0919":{l:"八月初十",g:"丙申",s:[["尾宿","00:00","14:52"],["箕宿","14:53","24:00"]]},
+"0920":{l:"八月十一",g:"丁酉",s:[["箕宿","00:00","09:22"],["斗宿","09:23","24:00"]]},
+"0921":{l:"八月十二",g:"戊戌",s:[["斗宿","00:00","24:00"]]},
+"0922":{l:"八月十三",g:"己亥",s:[["斗宿","00:00","07:18"],["牛宿","07:19","18:31"],["女宿","18:32","24:00"]]},
+"0923":{l:"八月十四",g:"庚子",s:[["女宿","00:00","15:41"],["虚宿","15:42","24:00"]]},
+"0924":{l:"八月十五",g:"辛丑",s:[["虚宿","00:00","10:38"],["危宿","10:39","24:00"]]},
+"0925":{l:"八月十六",g:"壬寅",s:[["危宿","00:00","15:29"],["室宿","15:30","24:00"]]},
+"0926":{l:"八月十七",g:"癸卯",s:[["室宿","00:00","24:00"]]},
+"0927":{l:"八月十八",g:"甲辰",s:[["室宿","00:00","05:24"],["壁宿","05:25","18:45"],["奎宿","18:46","24:00"]]},
+"0928":{l:"八月十九",g:"乙巳",s:[["奎宿","00:00","24:00"]]},
+"0929":{l:"八月二十",g:"丙午",s:[["奎宿","00:00","04:38"],["娄宿","04:39","23:27"],["胃宿","23:28","24:00"]]},
+"0930":{l:"八月廿一",g:"丁未",s:[["胃宿","00:00","24:00"]]},
+"1001":{l:"八月廿二",g:"戊申",s:[["胃宿","00:00","00:15"],["昴宿","00:16","17:41"],["毕宿","17:42","24:00"]]},
+"1002":{l:"八月廿三",g:"己酉",s:[["毕宿","00:00","18:33"],["觜宿","18:34","20:12"],["参宿","20:13","24:00"]]},
+"1003":{l:"八月廿四",g:"庚戌",s:[["参宿","00:00","14:20"],["井宿","14:21","24:00"]]},
+"1004":{l:"八月廿五",g:"辛亥",s:[["井宿","00:00","24:00"]]},
+"1005":{l:"八月廿六",g:"壬子",s:[["井宿","00:00","17:11"],["鬼宿","17:12","19:05"],["柳宿","19:06","24:00"]]},
+"1006":{l:"八月廿七",g:"癸丑",s:[["柳宿","00:00","17:47"],["星宿","17:48","24:00"]]},
+"1007":{l:"八月廿八",g:"甲寅",s:[["星宿","00:00","02:01"],["张宿","02:02","24:00"]]},
+"1008":{l:"八月廿九",g:"乙卯",s:[["张宿","00:00","13:58"],["翼宿","13:59","24:00"]]},
+"1009":{l:"九月初一",g:"丙辰",s:[["翼宿","00:00","24:00"]]},
+"1010":{l:"九月初二",g:"丁巳",s:[["翼宿","00:00","02:00"],["轸宿","02:01","24:00"]]},
+"1011":{l:"九月初三",g:"戊午",s:[["轸宿","00:00","15:15"],["角宿","15:16","24:00"]]},
+"1012":{l:"九月初四",g:"己未",s:[["角宿","00:00","13:52"],["亢宿","13:53","24:00"]]},
+"1013":{l:"九月初五",g:"庚申",s:[["亢宿","00:00","06:17"],["氐宿","06:18","24:00"]]},
+"1014":{l:"九月初六",g:"辛酉",s:[["氐宿","00:00","15:35"],["房宿","15:36","24:00"]]},
+"1015":{l:"九月初七",g:"壬戌",s:[["房宿","00:00","01:57"],["心宿","01:58","13:35"],["尾宿","13:36","24:00"]]},
+"1016":{l:"九月初八",g:"癸亥",s:[["尾宿","00:00","24:00"]]},
+"1017":{l:"九月初九",g:"甲子",s:[["尾宿","00:00","01:31"],["箕宿","01:32","18:56"],["斗宿","18:57","24:00"]]},
+"1018":{l:"九月初十",g:"乙丑",s:[["斗宿","00:00","24:00"]]},
+"1019":{l:"九月十一",g:"丙寅",s:[["斗宿","00:00","13:34"],["牛宿","13:35","24:00"]]},
+"1020":{l:"九月十二",g:"丁卯",s:[["牛宿","00:00","05:15"],["女宿","05:16","24:00"]]},
+"1021":{l:"九月十三",g:"戊辰",s:[["女宿","00:00","03:59"],["虚宿","04:00","19:38"],["危宿","19:39","24:00"]]},
+"1022":{l:"九月十四",g:"己巳",s:[["危宿","00:00","24:00"]]},
+"1023":{l:"九月十五",g:"庚午",s:[["危宿","00:00","04:17"],["室宿","04:18","24:00"]]},
+"1024":{l:"九月十六",g:"辛未",s:[["室宿","00:00","12:26"],["壁宿","12:27","24:00"]]},
+"1025":{l:"九月十七",g:"壬申",s:[["壁宿","00:00","07:10"],["奎宿","07:11","24:00"]]},
+"1026":{l:"九月十八",g:"癸酉",s:[["奎宿","00:00","12:16"],["娄宿","12:17","24:00"]]},
+"1027":{l:"九月十九",g:"甲戌",s:[["娄宿","00:00","09:55"],["胃宿","09:56","24:00"]]},
+"1028":{l:"九月二十",g:"乙亥",s:[["胃宿","00:00","10:10"],["昴宿","10:11","24:00"]]},
+"1029":{l:"九月廿一",g:"丙子",s:[["昴宿","00:00","00:36"],["毕宿","00:37","24:00"]]},
+"1030":{l:"九月廿二",g:"丁丑",s:[["毕宿","00:00","00:21"],["觜宿","00:22","03:31"],["参宿","03:32","24:00"]]}
+};
+
+(function initCal(){
+var calShiftDays=0;
+window.calShift=function(d){calShiftDays+=d;renderCal()};
+
+function fmtDate(y,m,d){return y+'-'+(m<10?'0':'')+m+'-'+(d<10?'0':'')+d}
+function getKey(d){var m=d.getMonth()+1,da=d.getDate();return(m<10?'0':'')+m+(da<10?'0':'')+da}
+function parseTime(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1])}
+
+function renderCal(){
+var now=new Date();now.setDate(now.getDate()+calShiftDays);
+var key=getKey(now);var entry=calData[key];
+var label=calShiftDays===0?'今天':calShiftDays===1?'明天':calShiftDays===-1?'昨天':fmtDate(now.getFullYear(),now.getMonth()+1,now.getDate());
+document.getElementById('calNavDate').textContent=label;
+
+if(!entry){document.getElementById('calDate').textContent=fmtDate(now.getFullYear(),now.getMonth()+1,now.getDate());document.getElementById('calGz').textContent='—';document.getElementById('calLunar').textContent='暂无数据';document.getElementById('calSegs').innerHTML='';document.getElementById('calActive').textContent='';return}
+
+document.getElementById('calDate').textContent=fmtDate(now.getFullYear(),now.getMonth()+1,now.getDate());
+document.getElementById('calGz').textContent=entry.g+'日';
+document.getElementById('calLunar').textContent=entry.l;
+
+var segsEl=document.getElementById('calSegs');segsEl.innerHTML='';
+var nowMins=calShiftDays===0?new Date().getHours()*60+new Date().getMinutes():-1;
+var active='';
+entry.s.forEach(function(seg){
+var div=document.createElement('span');div.className='calSeg';
+var isNow=calShiftDays===0&&nowMins>=parseTime(seg[1])&&nowMins<parseTime(seg[2]);
+if(isNow){div.classList.add('now');active=seg[0]}
+div.textContent=seg[0];var t=document.createElement('span');t.className='t';t.textContent=seg[1]+'-'+seg[2];div.appendChild(t);segsEl.appendChild(div)});
+document.getElementById('calActive').textContent=active?'当前：'+active:calShiftDays!==0?'':'今日已过';
+}
+renderCal();
+setInterval(function(){if(calShiftDays===0)renderCal()},60000);
+})();
+</script>
+</body>
+</html>
