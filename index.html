@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>28星宿企业能量诊断问卷</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            color: #86868b;
+            font-size: 16px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e8e8ed;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007aff 0%, #00c7ff 100%);
+            border-radius: 2px;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            border: 1px solid #e8e8ed;
+            opacity: 0;
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            position: relative;
+            padding: 16px 20px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #e8e8ed;
+            transform: translateX(4px);
+        }
+
+        .option.selected {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
+            transform: scale(1.02);
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option-text {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .group-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin: 40px 0 24px;
+            padding-left: 16px;
+            border-left: 4px solid #007aff;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-primary {
+            background: #007aff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0051d5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8ed;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeInModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideInModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideInModal {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #007aff 0%, #00c7ff 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .score-card h2 {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .score-card p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .dimension-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .dimension-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .dimension-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #007aff;
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f5f7;
+            border-radius: 12px;
+        }
+
+        .info-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e8e8ed;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+
+        .info-input:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .group-title {
+                font-size: 20px;
+                margin: 30px 0 16px;
+            }
+
+            .question-card {
+                padding: 20px;
+                margin-bottom: 16px;
+            }
+
+            .question-title {
+                font-size: 16px;
+            }
+
+            .option {
+                padding: 12px 16px;
+            }
+
+            .option-text {
+                font-size: 14px;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                padding: 14px;
+            }
+
+            .modal-content {
+                padding: 24px;
+                width: 95%;
+            }
+
+            .result-title {
+                font-size: 22px;
+            }
+
+            .score-card h2 {
+                font-size: 36px;
+            }
+
+            .dimension-name {
+                font-size: 14px;
+            }
+
+            .dimension-value {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>28星宿企业能量诊断问卷</h1>
+            <p>填写时间约15分钟 · 请凭第一直觉作答</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <form id="questionnaire">
+            <div class="info-section">
+                <input type="text" class="info-input" id="companyName" placeholder="企业名称" required>
+                <input type="text" class="info-input" id="userName" placeholder="您的姓名（可昵称）" required>
+                <input type="tel" class="info-input" id="userPhone" placeholder="联系电话" required>
+            </div>
+
+            <div class="group-title">🐉 东方青龙 · 战略方向</div>
+            <div id="group1"></div>
+
+            <div class="group-title">🐢 北方玄武 · 运营执行</div>
+            <div id="group2"></div>
+
+            <div class="group-title">🐅 西方白虎 · 团队人才</div>
+            <div id="group3"></div>
+
+            <div class="group-title">🐦 南方朱雀 · 客户财务</div>
+            <div id="group4"></div>
+
+            <div class="btn-container">
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">重新填写</button>
+                <button type="submit" class="btn btn-primary">提交问卷</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="result-title">诊断结果</div>
+            <div class="score-card">
+                <h2 id="totalScore">0</h2>
+                <p>总分（满分140分）</p>
+            </div>
+            <div id="dimensionScores"></div>
+            <div class="btn-container">
+                <button class="btn btn-primary" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+            group1: [
+                {q: '角宿·目标：我们今年的核心目标清晰且全员知晓吗？', opts: ['1分 🔴 目标基本只有我自己知道', '2分 🟠 目标在几个核心伙伴心里', '3分 🟡 目标已发布但理解参差不齐', '4分 🟢 目标明确且核心团队认同', '5分 💚 目标拆解到位全员对齐']},
+                {q: '亢宿·竞争：我们对竞争对手和市场竞争格局的了解有多深？', opts: ['1分 🔴 基本不看同行', '2分 🟠 知道几个主要对手', '3分 🟡 了解对手产品但不清楚战略', '4分 🟢 定期做竞品分析', '5分 💚 有完整竞争情报体系']},
+                {q: '氐宿·根基：我们的核心竞争力和护城河有多强？', opts: ['1分 🔴 不清楚核心竞争力', '2分 🟠 有优势但容易被模仿', '3分 🟡 有1-2个明显优势', '4分 🟢 核心竞争力明确难复制', '5分 💚 壁垒极高护城河深']},
+                {q: '房宿·市场：我们对目标市场的判断和市场份额的满意度如何？', opts: ['1分 🔴 没想清楚目标客户', '2分 🟠 大概知道但市场占有率低', '3分 🟡 目标市场明确但增长靠运气', '4分 🟢 市场清晰份额稳步提升', '5分 💚 市场洞察精准份额持续扩大']},
+                {q: '心宿·创新：我们的产品/服务创新能力如何？', opts: ['1分 🔴 几年没变过一直吃老本', '2分 🟠 有想法但难落地', '3分 🟡 偶尔有创新不成体系', '4分 🟢 有定期迭代机制', '5分 💚 创新是基因引领行业']},
+                {q: '尾宿·风险：我们对经营风险的识别和防控能力如何？', opts: ['1分 🔴 没有风险意识', '2分 🟠 知道风险但没精力管', '3分 🟡 有基本风控措施', '4分 🟢 核心风险已识别有预案', '5分 💚 有完善风险预警机制']},
+                {q: '箕宿·节奏：我们企业扩张和投入的节奏把控得如何？', opts: ['1分 🔴 节奏混乱想到哪做到哪', '2分 🟠 要么太激进要么太保守', '3分 🟡 节奏基本可控偶尔踩空', '4分 🟢 扩张节奏稳健平衡良性', '5分 💚 节奏精准该冲时冲该守时守']}
+            ],
+            group2: [
+                {q: '斗宿·效率：我们的运营效率和产出水平如何？', opts: ['1分 🔴 效率低下时间浪费', '2分 🟠 效率一般人均产出低', '3分 🟡 效率正常按时完成', '4分 🟢 效率较高人效优于同行', '5分 💚 效率卓越最少资源最大价值']},
+                {q: '牛宿·品质：我们的产品/服务质量水平如何？', opts: ['1分 🔴 质量问题频发投诉多', '2分 🟠 质量不稳定时好时坏', '3分 🟡 质量合格行业平均', '4分 🟢 质量稳定客户认可', '5分 💚 品质是名片客户溢价买单']},
+                {q: '女宿·服务：我们对待客户的服务水平如何？', opts: ['1分 🔴 基本没有服务意识', '2分 🟠 有服务但被动满意度一般', '3分 🟡 能主动服务但不够深入', '4分 🟢 服务体系完善客户被重视', '5分 💚 服务超预期客户主动推荐']},
+                {q: '虚宿·成本：我们的成本控制能力如何？', opts: ['1分 🔴 成本失控不知花在哪', '2分 🟠 成本偏高经常超预算', '3分 🟡 成本在可控范围', '4分 🟢 成本控制良好预算到位', '5分 💚 成本优势是核心竞争力']},
+                {q: '危宿·危机：我们应对突发危机和变故的能力如何？', opts: ['1分 🔴 出事基本靠老板一人扛', '2分 🟠 有应对但反应慢', '3分 🟡 一般危机能处理', '4分 🟢 有危机预案团队知道做什么', '5分 💚 危机中反而能抓住机会']},
+                {q: '室宿·流程：我们的业务流程规范化程度如何？', opts: ['1分 🔴 没流程全靠人盯人', '2分 🟠 有些流程但执行走样', '3分 🟡 核心业务流程基本建立', '4分 🟢 流程完善执行到位', '5分 💚 流程持续优化标准化体系']},
+                {q: '壁宿·标准：我们的工作和交付标准化程度如何？', opts: ['1分 🔴 每人按自己习惯做', '2分 🟠 有标准但不清晰', '3分 🟡 核心环节有标准', '4分 🟢 标准明确可衡量可考核', '5分 💚 标准成为行业标杆']}
+            ],
+            group3: [
+                {q: '奎宿·分工：我们组织的分工明确度和配合效率如何？', opts: ['1分 🔴 职责混乱', '2分 🟠 分工大致清楚灰色地带多', '3分 🟡 核心岗位职责明确', '4分 🟢 分工清晰权责匹配', '5分 💚 组织架构科学效率极高']},
+                {q: '娄宿·文化：我们企业的文化氛围和团队凝聚力如何？', opts: ['1分 🔴 各干各的无凝聚力', '2分 🟠 表面和谐遇利益易散', '3分 🟡 关系融洽有共同价值观', '4分 🟢 文化氛围好有使命感', '5分 💚 文化是核心竞争力']},
+                {q: '胃宿·激励：我们的薪酬激励和认可机制是否有效？', opts: ['1分 🔴 薪酬偏低靠感情留人', '2分 🟠 薪酬一般付出回报不匹配', '3分 🟡 薪酬合理但激励单一', '4分 🟢 激励体系完善', '5分 💚 激励有竞争力为自己干']},
+                {q: '昴宿·领导：管理层的领导力和决策效率如何？', opts: ['1分 🔴 管理层没威信', '2分 🟠 有威信但决策慢', '3分 🟡 能独立处理日常事务', '4分 🟢 决策效率高果断拍板', '5分 💚 每个管理者都是小CEO']},
+                {q: '毕宿·沟通：我们内部的沟通效率和信息传递质量如何？', opts: ['1分 🔴 沟通靠吼信息不对称', '2分 🟠 经常传达不到位', '3分 🟡 核心信息能传达', '4分 🟢 沟通渠道通畅', '5分 💚 沟通高效透明跨部门无缝']},
+                {q: '觜宿·培养：我们对员工的培养和成长投入如何？', opts: ['1分 🔴 没有培养', '2分 🟠 偶尔有培训', '3分 🟡 有基本新人培训', '4分 🟢 有完善培训体系', '5分 💚 培养体系是核心竞争力']},
+                {q: '参宿·梯队：我们的人才梯队和核心岗位后备力量如何？', opts: ['1分 🔴 核心岗位全凭老板', '2分 🟠 有人但能力不够', '3分 🟡 每个核心岗位至少1个替补', '4分 🟢 梯队建设系统化', '5分 💚 深厚的人才梯队']}
+            ],
+            group4: [
+                {q: '井宿·利润：我们的盈利能力和利润水平如何？', opts: ['1分 🔴 亏损或勉强持平', '2分 🟠 利润很薄', '3分 🟡 利润稳定', '4分 🟢 利润水平行业中上', '5分 💚 利润率高且持续增长']},
+                {q: '鬼宿·隐忧：我们企业目前存在哪些潜在的隐患？', opts: ['1分 🔴 隐患很多', '2分 🟠 有1-2个大隐患', '3分 🟡 隐患已识别有方案', '4分 🟢 几乎没有大隐患', '5分 💚 不管出什么问题都能扛']},
+                {q: '柳宿·客户：我们的客户满意度和客户粘性如何？', opts: ['1分 🔴 客户流失率高', '2分 🟠 满意度一般复购率低', '3分 🟡 客户基本满意', '4分 🟢 满意度高多数会复购', '5分 💚 客户忠诚度极高主动介绍']},
+                {q: '星宿·增长：我们的营收增长速度和增长质量如何？', opts: ['1分 🔴 增长停滞或下滑', '2分 🟠 增长不稳定', '3分 🟡 稳定增长达行业平均', '4分 🟢 增长高于行业平均', '5分 💚 高速增长且可持续']},
+                {q: '张宿·口碑：我们的市场口碑和品牌声誉如何？', opts: ['1分 🔴 没什么知名度', '2分 🟠 偶尔有人知道', '3分 🟡 同行业有一定口碑', '4分 🟢 口碑良好', '5分 💚 口碑是金字招牌']},
+                {q: '翼宿·传播：我们的营销和获客能力如何？', opts: ['1分 🔴 不会营销靠熟人', '2分 🟠 在做但效果一般', '3分 🟡 有稳定获客渠道', '4分 🟢 营销体系完善', '5分 💚 我们很会被传播']},
+                {q: '轸宿·回款：我们的回款和现金流健康度如何？', opts: ['1分 🔴 现金流经常紧张', '2分 🟠 回款有压力', '3分 🟡 回款节奏正常', '4分 🟢 回款及时现金流充裕', '5分 💚 预付款快周转现金流优势']}
+            ]
+        };
+
+        let answers = {};
+
+        function renderQuestions() {
+            Object.keys(questions).forEach((group, groupIdx) => {
+                const container = document.getElementById(group);
+                questions[group].forEach((item, idx) => {
+                    const qNum = groupIdx * 7 + idx + 1;
+                    const card = document.createElement('div');
+                    card.className = 'question-card';
+                    card.style.animationDelay = `${idx * 0.05}s`;
+
+                    let html = `<div class="question-title">${qNum}. ${item.q}</div><div class="options">`;
+                    item.opts.forEach((opt, optIdx) => {
+                        const score = optIdx + 1;
+                        html += `
+                            <label class="option" data-question="${qNum}">
+                                <input type="radio" name="q${qNum}" value="${score}" required>
+                                <span class="option-text">${opt}</span>
+                            </label>
+                        `;
+                    });
+                    html += '</div>';
+                    card.innerHTML = html;
+                    container.appendChild(card);
+                });
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const qNum = this.dataset.question;
+                    document.querySelectorAll(`[data-question="${qNum}"]`).forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    this.querySelector('input').checked = true;
+                    updateProgress();
+                });
+            });
+        }
+
+        function updateProgress() {
+            const total = 28;
+            const answered = Object.keys(answers).length;
+            const percent = (answered / total) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        document.getElementById('questionnaire').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            answers = {};
+            for(let i = 1; i <= 28; i++) {
+                const val = document.querySelector(`input[name="q${i}"]:checked`)?.value;
+                if(val) answers[i] = parseInt(val);
+            }
+
+            if(Object.keys(answers).length < 28) {
+                alert('请完成所有问题');
+                return;
+            }
+
+            showResult();
+        });
+
+        function showResult() {
+            const group1Score = [1,2,3,4,5,6,7].reduce((sum, i) => sum + (answers[i] || 0), 0);
+            const group2Score = [8,9,10,11,12,13,14].reduce((sum, i) => sum + (answers[i] || 0), 0);
+            const group3Score = [15,16,17,18,19,20,21].reduce((sum, i) => sum + (answers[i] || 0), 0);
+            const group4Score = [22,23,24,25,26,27,28].reduce((sum, i) => sum + (answers[i] || 0), 0);
+            const total = group1Score + group2Score + group3Score + group4Score;
+
+            document.getElementById('totalScore').textContent = total;
+
+            const dimensionHtml = `
+                <div class="dimension-score">
+                    <span class="dimension-name">🐉 东方青龙·战略方向</span>
+                    <span class="dimension-value">${group1Score}/35</span>
+                </div>
+                <div class="dimension-score">
+                    <span class="dimension-name">🐢 北方玄武·运营执行</span>
+                    <span class="dimension-value">${group2Score}/35</span>
+                </div>
+                <div class="dimension-score">
+                    <span class="dimension-name">🐅 西方白虎·团队人才</span>
+                    <span class="dimension-value">${group3Score}/35</span>
+                </div>
+                <div class="dimension-score">
+                    <span class="dimension-name">🐦 南方朱雀·客户财务</span>
+                    <span class="dimension-value">${group4Score}/35</span>
+                </div>
+            `;
+
+            document.getElementById('dimensionScores').innerHTML = dimensionHtml;
+            document.getElementById('resultModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('active');
+        }
+
+        function resetForm() {
+            if(confirm('确定要重新填写吗？')) {
+                document.getElementById('questionnaire').reset();
+                document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                answers = {};
+                updateProgress();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+        }
+
+        window.addEventListener('click', function(e) {
+            if(e.target.id === 'resultModal') {
+                closeModal();
+            }
+        });
+
+        renderQuestions();
+    </script>
+</body>
+</html>
